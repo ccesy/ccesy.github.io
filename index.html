@@ -1,3 +1,5 @@
+---
+---
 <!doctype html>
 <html lang="zh-CN">
 <head>
@@ -13,16 +15,57 @@
       color: #27312d;
       font: 18px/1.85 system-ui, sans-serif;
     }
-    img { display: block; border-radius: 50%; }
-    h1 { font-size: clamp(30px, 6vw, 46px); line-height: 1.3; }
-    footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #ccd2ca; }
-    a { color: #27644c; text-underline-offset: 4px; }
+
+    img {
+      display: block;
+      border-radius: 50%;
+    }
+
+    h1 {
+      font-size: clamp(30px, 6vw, 46px);
+      line-height: 1.3;
+    }
+
+    details {
+      border-top: 1px solid #ccd2ca;
+      padding: 0.65rem 0;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    summary small {
+      font-weight: normal;
+      color: #546158;
+    }
+
+    details ul {
+      margin: 0.5rem 0;
+      padding-left: 1.5rem;
+    }
+
+    footer {
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 1px solid #ccd2ca;
+    }
+
+    a {
+      color: #27644c;
+      text-underline-offset: 4px;
+    }
   </style>
 </head>
 <body>
   <main>
-    <img src="https://avatars.githubusercontent.com/u/122677519?s=192"
-         width="88" height="88" alt="ccesy 的 GitHub 头像">
+    <img
+      src="https://avatars.githubusercontent.com/u/122677519?s=192"
+      width="88"
+      height="88"
+      alt="ccesy 的 GitHub 头像"
+    >
 
     <h1>ccesy 的机器人笔记</h1>
 
@@ -30,10 +73,47 @@
 
     <p>这个博客用来整理我在学习和实践中留下的笔记，也记录当时是怎么想的。</p>
 
-    <p>写一个知识点，我想讲清楚它解决什么问题、为什么这样做，以及它在机器人上怎么用。
-       写一个项目，我想把过程讲完整，包括最初的设想、做过的尝试、遇到的问题，以及最后怎么验证效果。</p>
+    <p>
+      写一个知识点，我想讲清楚它解决什么问题、为什么这样做，以及它在机器人上怎么用。
+      写一个项目，我想把过程讲完整，包括最初的设想、做过的尝试、遇到的问题，以及最后怎么验证效果。
+    </p>
 
-    <footer><a href="https://github.com/ccesy">我的 GitHub</a></footer>
+    <section aria-labelledby="series-title">
+      <h2 id="series-title">按系列读笔记</h2>
+
+      {% assign defaults = "计算机视觉（CV）|SLAM|工程实践" | split: "|" %}
+      {% assign custom = site.posts | map: "series" | compact | uniq %}
+      {% assign series_names = defaults | concat: custom | uniq %}
+
+      {% for name in series_names %}
+        {% assign articles = site.posts | where: "series", name %}
+
+        <details>
+          <summary>
+            {{ name | escape }}
+            <small>（{{ articles.size }} 篇）</small>
+          </summary>
+
+          {% if articles.size > 0 %}
+            <ul>
+              {% for article in articles %}
+                <li>
+                  <a href="{{ article.url | relative_url | escape }}">
+                    {{ article.title | escape }}
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p>这个系列还没有文章。</p>
+          {% endif %}
+        </details>
+      {% endfor %}
+    </section>
+
+    <footer>
+      <a href="https://github.com/ccesy">我的 GitHub</a>
+    </footer>
   </main>
 </body>
 </html>
