@@ -9,5 +9,6 @@ title: ccesy 的机器人笔记
       写一个项目，我想把过程讲完整，包括最初的设想、做过的尝试、遇到的问题，以及最后怎么验证效果。
     </p>
 
+{% assign all_notes = site.posts | concat: site.notes %}
 <h2>笔记</h2>
-<ul>{% for note in site.posts %}<li><a href="{{ note.url | relative_url | escape }}">{{ note.title | escape }}</a> · {{ note.series | escape }}</li>{% else %}<li>还没有发布笔记。</li>{% endfor %}</ul>
+<ul>{% for note in all_notes %}<li><a href="{{ note.url | relative_url | escape }}">{{ note.title | escape }}</a> · {{ note.series | escape }}</li>{% else %}<li>还没有发布笔记。</li>{% endfor %}</ul>

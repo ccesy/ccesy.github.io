@@ -79,12 +79,13 @@
     <section aria-labelledby="series-title">
       <h2 id="series-title">按系列读笔记</h2>
 
+{% assign all_notes = site.posts | concat: site.notes %}
       {% assign defaults = "计算机视觉（CV）|SLAM|工程实践" | split: "|" %}
-      {% assign custom = site.posts | map: "series" | compact | uniq %}
+      {% assign custom = all_notes | map: "series" | compact | uniq %}
       {% assign series_names = defaults | concat: custom | uniq %}
 
       {% for name in series_names %}
-        {% assign articles = site.posts | where: "series", name %}
+        {% assign articles = all_notes | where: "series", name %}
 
         <details{% if page.series == name %} open{% endif %}>
           <summary>

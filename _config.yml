@@ -1,0 +1,16 @@
+collections:
+  notes:
+    output: true
+    permalink: /notes/:path/
+defaults:
+  - scope:
+      path: ""
+      type: notes
+    values:
+      layout: notebook
+  - scope:
+      path: "_notes/stereo-vision"
+      type: notes
+    values:
+      series: 计算机视觉（CV）
+      course: stereo-vision
