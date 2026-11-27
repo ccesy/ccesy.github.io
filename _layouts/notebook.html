@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ccesy 的机器人笔记</title>
+  <title>{% if page.stereo_article %}{% include note-title.html note=page %} · {% endif %}ccesy 的机器人笔记</title>
   <style>
     body {
       max-width: 640px;
@@ -79,46 +79,42 @@
     <section aria-labelledby="series-title">
       <h2 id="series-title">按系列读笔记</h2>
 
-{% assign all_notes = site.posts | concat: site.notes %}
+      {% assign note_pages = site.pages | where: "notebook_note", true %}
+      {% assign stereo_articles = note_pages | where: "stereo_article", true | sort: "name" %}
+      {% assign other_notes = note_pages | where_exp: "note", "note.stereo_article != true" %}
+      {% assign all_notes = site.posts | concat: other_notes %}
       {% assign defaults = "计算机视觉（CV）|SLAM|工程实践" | split: "|" %}
       {% assign custom = all_notes | map: "series" | compact | uniq %}
       {% assign series_names = defaults | concat: custom | uniq %}
 
       {% for name in series_names %}
         {% assign articles = all_notes | where: "series", name %}
+        {% assign article_count = articles.size %}
+        {% if name == "计算机视觉（CV）" %}
+          {% assign article_count = article_count | plus: stereo_articles.size %}
+        {% endif %}
 
         <details{% if page.series == name %} open{% endif %}>
           <summary>
             {{ name | escape }}
-            <small>（{{ articles.size }} 篇）</small>
+            <small>（{{ article_count }} 篇）</small>
           </summary>
 
           {% if name == "计算机视觉（CV）" %}
-            <details style="margin-left:1rem"{% if page.course == "stereo-vision" %} open{% endif %}>
+            <details style="margin-left:1rem"{% if page.stereo_article %} open{% endif %}>
               <summary>从零实现双目视觉</summary>
-              {% assign lessons = articles | where: "course", "stereo-vision" %}
-              {% for stage in site.data.stereo_vision %}
-                <p>{{ stage.name | escape }}</p>
-                <ol start="{{ stage.lessons[0][0] }}">
-                  {% for lesson in stage.lessons %}
-                    {% assign matches = lessons | where: "chapter", lesson[0] %}
-                    <li>{% if matches.size > 0 %}
-                      {% for note in matches %}<a href="{{ note.url | relative_url | escape }}">{{ note.title | escape }}</a>{% unless forloop.last %} / {% endunless %}{% endfor %}
-                    {% else %}{{ lesson[1] | escape }} <small>待写</small>{% endif %}</li>
+              {% if stereo_articles.size > 0 %}
+                <ul>
+                  {% for note in stereo_articles %}
+                    <li><a href="{{ note.url | relative_url | escape }}"{% if page.url == note.url %} aria-current="page"{% endif %}>{% include note-title.html note=note %}</a></li>
                   {% endfor %}
-                </ol>
-              {% endfor %}
-              {% for note in lessons %}
-                {% unless note.chapter and note.chapter >= 1 and note.chapter <= 8 %}
-                  <p><a href="{{ note.url | relative_url | escape }}">{{ note.title | escape }}</a></p>
-                {% endunless %}
-              {% endfor %}
+                </ul>
+              {% endif %}
             </details>
           {% endif %}
           {% if articles.size > 0 %}
             <ul>
               {% for article in articles %}
-                {% if name == "计算机视觉（CV）" and article.course == "stereo-vision" %}{% continue %}{% endif %}
                 <li>
                   <a href="{{ article.url | relative_url | escape }}">
                     {{ article.title | escape }}
@@ -137,7 +133,7 @@
       <a href="https://github.com/ccesy">我的 GitHub</a>
     </footer>
   </aside>
-    <main><h1>{{ page.title | escape }}</h1>{{ content }}</main>
+  <main><h1>{% include note-title.html note=page %}</h1>{{ content }}</main>
 </body>
 </html>
 

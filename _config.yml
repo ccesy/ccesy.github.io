@@ -1,16 +1,18 @@
-collections:
-  notes:
-    output: true
-    permalink: /notes/:path/
+include:
+  - _notes
+plugins:
+  - jekyll-optional-front-matter
 defaults:
   - scope:
-      path: ""
-      type: notes
+      path: "_notes"
+      type: pages
     values:
       layout: notebook
+      notebook_note: true
   - scope:
-      path: "_notes/stereo-vision"
-      type: notes
+      path: "_notes/stereo-vision/*.md"
+      type: pages
     values:
       series: 计算机视觉（CV）
-      course: stereo-vision
+      stereo_article: true
+      permalink: /notes/stereo-vision/:basename/
