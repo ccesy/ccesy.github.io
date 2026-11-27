@@ -93,9 +93,32 @@
             <small>（{{ articles.size }} 篇）</small>
           </summary>
 
+          {% if name == "计算机视觉（CV）" %}
+            <details style="margin-left:1rem"{% if page.course == "stereo-vision" %} open{% endif %}>
+              <summary>从零实现双目视觉</summary>
+              {% assign lessons = articles | where: "course", "stereo-vision" %}
+              {% for stage in site.data.stereo_vision %}
+                <p>{{ stage.name | escape }}</p>
+                <ol start="{{ stage.lessons[0][0] }}">
+                  {% for lesson in stage.lessons %}
+                    {% assign matches = lessons | where: "chapter", lesson[0] %}
+                    <li>{% if matches.size > 0 %}
+                      {% for note in matches %}<a href="{{ note.url | relative_url | escape }}">{{ note.title | escape }}</a>{% unless forloop.last %} / {% endunless %}{% endfor %}
+                    {% else %}{{ lesson[1] | escape }} <small>待写</small>{% endif %}</li>
+                  {% endfor %}
+                </ol>
+              {% endfor %}
+              {% for note in lessons %}
+                {% unless note.chapter and note.chapter >= 1 and note.chapter <= 8 %}
+                  <p><a href="{{ note.url | relative_url | escape }}">{{ note.title | escape }}</a></p>
+                {% endunless %}
+              {% endfor %}
+            </details>
+          {% endif %}
           {% if articles.size > 0 %}
             <ul>
               {% for article in articles %}
+                {% if name == "计算机视觉（CV）" and article.course == "stereo-vision" %}{% continue %}{% endif %}
                 <li>
                   <a href="{{ article.url | relative_url | escape }}">
                     {{ article.title | escape }}
@@ -103,7 +126,7 @@
                 </li>
               {% endfor %}
             </ul>
-          {% else %}
+          {% elsif name != "计算机视觉（CV）" %}
             <p>这个系列还没有文章。</p>
           {% endif %}
         </details>
